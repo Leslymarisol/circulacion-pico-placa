@@ -4,6 +4,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,9 @@ public class RestrictionController {
         List<Restriction> result = restrictionRepository.search(data.getLastDigit());
 
         try {
+
+            LocalTime currentHour = LocalTime.now();
+
             LocalDateTime todayDate = LocalDateTime.now();
             // Definir el formato deseado
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -55,7 +59,11 @@ public class RestrictionController {
             // Fecha ingresada por el usuario
             Date userDate = new SimpleDateFormat("dd-MM-yyyy").parse(data.getDate());
 
-            if (!userDate.before(currentDay)) {
+            boolean hourBeforeCurrent = data.getHour().toLocalTime().isBefore(currentHour);
+
+            boolean dateBeforeCurrent = userDate.before(currentDay);
+
+            if (!dateBeforeCurrent && !hourBeforeCurrent) {
                 // La fecha NO es anterior a la fecha actual
                 DateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
                 for (Restriction picoplaca : result) {
@@ -77,7 +85,15 @@ public class RestrictionController {
                 }
 
             } else {
-                message = "La fecha es ANTERIOR a la fecha actual ";
+
+                if (dateBeforeCurrent) {
+                    message = "La fecha es ANTERIOR a la fecha actual ";
+                }
+
+                if (hourBeforeCurrent) {
+                    message = "La hora es ANTERIOR a la hora actual ";
+                }
+
             }
 
         } catch (Exception e) {
