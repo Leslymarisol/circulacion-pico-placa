@@ -1,7 +1,13 @@
 package com.validacioncirculacion.picoplacabackend.controller;
 
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,21 +42,46 @@ public class RestrictionController {
 
         List<Restriction> result = restrictionRepository.search(data.getLastDigit());
 
-        for (Restriction picoplaca : result) {
-            dayRestriction = picoplaca.getDay().getWeekday();
-            startTimeMorningRestriction = picoplaca.getHours().getStartTimeMorning();
-            endTimeMorningRestriction = picoplaca.getHours().getEndTimeMorning();
-            starTimeNightRestriction = picoplaca.getHours().getStartTimeNight();
-            endTimeNightRestriction = picoplaca.getHours().getEndTimeNight();
+        try {
+            LocalDateTime todayDate = LocalDateTime.now();
+            // Definir el formato deseado
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-            if ((data.getWeekday().equals(dayRestriction)) && ((!data.getHour().before(startTimeMorningRestriction)
-                    && !data.getHour().after(endTimeMorningRestriction))
-                    || (!data.getHour().before(starTimeNightRestriction)
-                    && !data.getHour().after(endTimeNightRestriction)))) {
-                message = "No puede circular";
+            // Aplicar el formato a la fecha y hora actual
+            String dateFormat = todayDate.format(format);
+
+            Date currentDay = new SimpleDateFormat("dd-MM-yyyy").parse(dateFormat);
+
+            // Fecha ingresada por el usuario
+            Date userDate = new SimpleDateFormat("dd-MM-yyyy").parse(data.getDate());
+
+            if (!userDate.before(currentDay)) {
+                // La fecha NO es anterior a la fecha actual
+                DateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
+                for (Restriction picoplaca : result) {
+                    dayRestriction = picoplaca.getDay().getWeekday();
+                    startTimeMorningRestriction = picoplaca.getHours().getStartTimeMorning();
+                    endTimeMorningRestriction = picoplaca.getHours().getEndTimeMorning();
+                    starTimeNightRestriction = picoplaca.getHours().getStartTimeNight();
+                    endTimeNightRestriction = picoplaca.getHours().getEndTimeNight();
+
+                    if ((weekdayFormat.format(userDate).equals(dayRestriction))
+                            && ((!data.getHour().before(startTimeMorningRestriction)
+                                    && !data.getHour().after(endTimeMorningRestriction))
+                                    || (!data.getHour().before(starTimeNightRestriction)
+                                            && !data.getHour().after(endTimeNightRestriction)))) {
+                        message = "No puede circular";
+                    } else {
+                        message = "Es libre de circular ";
+                    }
+                }
+
             } else {
-                message = "Es libre de circular";
+                message = "La fecha es ANTERIOR a la fecha actual ";
             }
+
+        } catch (Exception e) {
+            System.out.println("Something bad has occurred");
         }
 
         return message;

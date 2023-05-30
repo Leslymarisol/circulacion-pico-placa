@@ -5,12 +5,12 @@ import java.sql.Time;
 public class Data {
 
     private int lastDigit;
-    private String weekday;
+    private String date;
     private Time hour;
     
-    public Data(int lastDigit, String weekday, Time hour) {
+    public Data(int lastDigit, String date, Time hour) {
         this.lastDigit = lastDigit;
-        this.weekday = weekday;
+        this.date = date;
         this.hour = hour;
     }
 
@@ -22,12 +22,12 @@ public class Data {
         this.lastDigit = lastDigit;
     }
 
-    public String getWeekday() {
-        return weekday;
+    public String getDate() {
+        return date;
     }
 
-    public void setWeekday(String weekday) {
-        this.weekday = weekday;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public Time getHour() {
@@ -37,8 +37,8 @@ public class Data {
     public void setHour(Time hour) {
         this.hour = hour;
     }
-
-
+    
+    
 
     
 }
