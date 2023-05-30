@@ -73,11 +73,13 @@ public class RestrictionController {
                     starTimeNightRestriction = picoplaca.getHours().getStartTimeNight();
                     endTimeNightRestriction = picoplaca.getHours().getEndTimeNight();
 
+                    boolean morningSchedule = (!data.getHour().before(startTimeMorningRestriction)
+                            && !data.getHour().after(endTimeMorningRestriction));
+                    boolean nightSchedule = (!data.getHour().before(starTimeNightRestriction)
+                            && !data.getHour().after(endTimeNightRestriction));
+
                     if ((weekdayFormat.format(userDate).equals(dayRestriction))
-                            && ((!data.getHour().before(startTimeMorningRestriction)
-                                    && !data.getHour().after(endTimeMorningRestriction))
-                                    || (!data.getHour().before(starTimeNightRestriction)
-                                            && !data.getHour().after(endTimeNightRestriction)))) {
+                            && (morningSchedule || nightSchedule)) {
                         message = "No puede circular";
                     } else {
                         message = "Es libre de circular ";
