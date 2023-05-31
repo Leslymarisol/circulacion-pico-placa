@@ -1,6 +1,6 @@
 package com.validacioncirculacion.picoplacabackend.controller;
 
-import java.sql.Time;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -36,67 +36,69 @@ public class RestrictionController {
     private String validateData(Data data) {
         String message = "";
         String dayRestriction = "";
-        Time startTimeMorningRestriction;
-        Time endTimeMorningRestriction;
-        Time starTimeNightRestriction;
-        Time endTimeNightRestriction;
+        LocalTime startTimeMorningRestriction;
+        LocalTime endTimeMorningRestriction;
+        LocalTime starTimeNightRestriction;
+        LocalTime endTimeNightRestriction;
 
         List<Restriction> result = restrictionRepository.search(data.getLastDigit());
 
         try {
 
             LocalTime currentHour = LocalTime.now();
+            LocalTime userHour = LocalTime.parse(data.getHour());
 
             LocalDateTime todayDate = LocalDateTime.now();
             // Definir el formato deseado
-            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             // Aplicar el formato a la fecha y hora actual
             String dateFormat = todayDate.format(format);
 
-            Date currentDay = new SimpleDateFormat("dd-MM-yyyy").parse(dateFormat);
+            Date currentDay = new SimpleDateFormat("yyyy-MM-dd").parse(dateFormat);
 
             // Fecha ingresada por el usuario
-            Date userDate = new SimpleDateFormat("dd-MM-yyyy").parse(data.getDate());
-
-            boolean hourBeforeCurrent = data.getHour().toLocalTime().isBefore(currentHour);
+            Date userDate = new SimpleDateFormat("yyyy-MM-dd").parse(data.getDate());
+ 
+            
+            boolean hourBeforeCurrent = userHour.isBefore(currentHour);
 
             boolean dateBeforeCurrent = userDate.before(currentDay);
 
-            if (!dateBeforeCurrent && !hourBeforeCurrent) {
+            if ((!dateBeforeCurrent && !hourBeforeCurrent) || (!dateBeforeCurrent && hourBeforeCurrent)) {
                 // La fecha NO es anterior a la fecha actual
                 DateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
                 for (Restriction picoplaca : result) {
                     dayRestriction = picoplaca.getDay().getWeekday();
-                    startTimeMorningRestriction = picoplaca.getHours().getStartTimeMorning();
-                    endTimeMorningRestriction = picoplaca.getHours().getEndTimeMorning();
-                    starTimeNightRestriction = picoplaca.getHours().getStartTimeNight();
-                    endTimeNightRestriction = picoplaca.getHours().getEndTimeNight();
+                    startTimeMorningRestriction = picoplaca.getHours().getStartTimeMorning().toLocalTime();
+                    endTimeMorningRestriction = picoplaca.getHours().getEndTimeMorning().toLocalTime();
+                    starTimeNightRestriction = picoplaca.getHours().getStartTimeNight().toLocalTime();
+                    endTimeNightRestriction = picoplaca.getHours().getEndTimeNight().toLocalTime();
 
-                    boolean morningSchedule = (!data.getHour().before(startTimeMorningRestriction)
-                            && !data.getHour().after(endTimeMorningRestriction));
-                    boolean nightSchedule = (!data.getHour().before(starTimeNightRestriction)
-                            && !data.getHour().after(endTimeNightRestriction));
+                    boolean morningSchedule = (!userHour.isBefore(startTimeMorningRestriction)
+                            && !userHour.isAfter(endTimeMorningRestriction));
+                    boolean nightSchedule = (!userHour.isBefore(starTimeNightRestriction)
+                            && !userHour.isAfter(endTimeNightRestriction));
 
                     if ((weekdayFormat.format(userDate).equals(dayRestriction))
                             && (morningSchedule || nightSchedule)) {
-                        message = "No puede circular";
+                        message = "El vehículo no circula";
                     } else {
-                        message = "Es libre de circular ";
+                        message = "El vehículo puede circular";
                     }
                 }
 
-            } else {
+            } 
 
                 if (dateBeforeCurrent) {
-                    message = "La fecha es ANTERIOR a la fecha actual ";
+                    message = "La fecha es anterior a la actual, ingrese nuevamente.";
                 }
 
-                if (hourBeforeCurrent) {
-                    message = "La hora es ANTERIOR a la hora actual ";
+                if (hourBeforeCurrent && userDate.equals(currentDay) ) {
+                    message = "La hora es anterior a la actual, ingrese nuevamente. ";
                 }
 
-            }
+            
 
         } catch (Exception e) {
             System.out.println("Something bad has occurred");

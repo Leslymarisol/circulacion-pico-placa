@@ -1,42 +1,39 @@
 package com.validacioncirculacion.picoplacabackend.entity;
 
-import java.sql.Time;
 
 public class Data {
 
     private int lastDigit;
     private String date;
-    private Time hour;
+    private String hour;
+
+
+
     
-    public Data(int lastDigit, String date, Time hour) {
+    public Data(int lastDigit, String date, String hour) {
         this.lastDigit = lastDigit;
         this.date = date;
         this.hour = hour;
     }
-
     public int getLastDigit() {
         return lastDigit;
     }
-
     public void setLastDigit(int lastDigit) {
         this.lastDigit = lastDigit;
     }
-
     public String getDate() {
         return date;
     }
-
     public void setDate(String date) {
         this.date = date;
     }
-
-    public Time getHour() {
+    public String getHour() {
         return hour;
     }
-
-    public void setHour(Time hour) {
+    public void setHour(String hour) {
         this.hour = hour;
     }
+    
     
     
 
