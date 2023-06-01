@@ -21,9 +21,13 @@ Abrir la terminal, descargar y ejecutar el contenedor MySQL usando el comando:
 
 - Clonar el repositorio de este proyecto y abrirlo en el IDE de tu preferencia
 - Dentro del archivo application.properties, asegúrate de que los datos coincidan con los datos especificados en el contenedor:
+
      spring.datasource.url=jdbc:mysql://localhost:**3306**/**nombre_base_datos**
+     
      spring.datasource.username=**root**
+     
      spring.datasource.password=**contraseña**
+     
    
 **Compilación y ejecución**
 - Abre el terminal y dirigirse al directorio raíz del proyecto. Luego ejecuta el siguiente comando para compilar el proyecto:
