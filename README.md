@@ -1,7 +1,7 @@
 # Consulta de pico y placa
 
 
-El presente proyecto permite realizar la consulta por numero de placa y comprobar si un vehículo puede circular en una fecha o día determinado; Por lo que la aplicación permite ingresar la placa y la fecha actual con la hora.
+El presente proyecto permite realizar la consulta por número de placa y comprobar si un vehículo puede circular en una fecha o día determinado; Por lo que la aplicación permite ingresar la placa y la fecha actual con la hora.
 
 **Backend**
 
