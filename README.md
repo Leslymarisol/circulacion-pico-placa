@@ -9,7 +9,7 @@ El presente proyecto permite realizar la consulta por número de placa y comprob
 
 Instalar:
 - Docker: Para ejecutar el contenedor MySQL.
-- Java Development Kit (JDK): Para compilar y ejecutar la aplicación Spring Boot.
+- Java Development Kit (JDK 17): Para compilar y ejecutar la aplicación Spring Boot.
 - Maven: Para gestionar las dependencias del proyecto.
 
 **Contenedor MySQL**
